@@ -37,7 +37,7 @@ export const findUserByEmailPassword = (email: string, password: string) =>
 
 export const deleteUser = (id: string) => {
   const index = users.findIndex((user) => user.id === id);
-  if (index >= 0) {
+  if (index != -1) {
     users.splice(index, 1);
   }
 };

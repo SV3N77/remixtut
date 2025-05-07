@@ -20,7 +20,7 @@ export const users: User[] = [
   },
 ];
 
-export const loginUser = (user: User) => {
+export const addUser = (user: User) => {
   const existingUser = findUserByEmailPassword(user.email, user.password);
   if (!existingUser) {
     users.push(user);
@@ -29,10 +29,7 @@ export const loginUser = (user: User) => {
 
 export const getUser = (id: string) => {
   const user = users.find((user) => user.id === id);
-  if (user) {
-    return user;
-  }
-  return null;
+  return user;
 };
 
 export const findUserByEmailPassword = (email: string, password: string) =>

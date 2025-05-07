@@ -1,11 +1,47 @@
 import type { MetaFunction } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, useActionData } from "@remix-run/react";
+import { addUser, findUserByEmailPassword, User } from "users";
+import { v4 as uuidv4 } from "uuid";
+
+type ActionData = {
+  error: string;
+  user: User;
+};
 
 export const meta: MetaFunction = () => {
   return [{ title: "New Remix App" }, { name: "description", content: "Welcome to Remix!" }];
 };
 
+export const action = async ({ request }: { request: Request }) => {
+  const formData = await request.formData();
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  if (!email || !password) {
+    return Response.json({ error: "Email or password is missing" }, { status: 400 });
+  }
+
+  const newUser = {
+    id: uuidv4(),
+    name,
+    email,
+    password,
+  };
+
+  const existingUser = findUserByEmailPassword(email, password);
+
+  const user = existingUser || newUser;
+
+  if (existingUser) {
+    addUser(user);
+  }
+
+  return Response.json({ user }, { status: 200 });
+};
+
 export default function Index() {
+  const actionData = useActionData();
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
